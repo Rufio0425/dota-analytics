@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Enable UUID extension -->
+    <changeSet id="001-01-enable-uuid-extension" author="claude">
+        <sql>
+            CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+        </sql>
+        <rollback>
+            DROP EXTENSION IF EXISTS "uuid-ossp";
+        </rollback>
+    </changeSet>
+
+    <!-- Create heroes table -->
+    <changeSet id="001-02-create-heroes-table" author="claude">
+        <createTable tableName="heroes">
+            <column name="id" type="uuid" defaultValueComputed="uuid_generate_v4()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="opendota_id" type="integer">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="localized_name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="primary_attr" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="attack_type" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="roles" type="text[]"/>
+            <column name="img" type="varchar(255)"/>
+            <column name="icon" type="varchar(255)"/>
+            <column name="base_health" type="integer"/>
+            <column name="base_health_regen" type="decimal(5,2)"/>
+            <column name="base_mana" type="integer"/>
+            <column name="base_mana_regen" type="decimal(5,2)"/>
+            <column name="base_armor" type="decimal(5,2)"/>
+            <column name="base_mr" type="integer"/>
+            <column name="base_attack_min" type="integer"/>
+            <column name="base_attack_max" type="integer"/>
+            <column name="base_str" type="integer"/>
+            <column name="base_agi" type="integer"/>
+            <column name="base_int" type="integer"/>
+            <column name="str_gain" type="decimal(5,2)"/>
+            <column name="agi_gain" type="decimal(5,2)"/>
+            <column name="int_gain" type="decimal(5,2)"/>
+            <column name="attack_range" type="integer"/>
+            <column name="projectile_speed" type="integer"/>
+            <column name="attack_rate" type="decimal(5,2)"/>
+            <column name="move_speed" type="integer"/>
+            <column name="turn_rate" type="decimal(5,3)"/>
+            <column name="cm_enabled" type="boolean" defaultValueBoolean="true"/>
+            <column name="legs" type="integer"/>
+            <column name="day_vision" type="integer"/>
+            <column name="night_vision" type="integer"/>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Create index on opendota_id for fast lookups -->
+        <createIndex tableName="heroes" indexName="idx_heroes_opendota_id">
+            <column name="opendota_id"/>
+        </createIndex>
+
+        <!-- Create index on name for search -->
+        <createIndex tableName="heroes" indexName="idx_heroes_name">
+            <column name="name"/>
+        </createIndex>
+
+        <!-- Create index on localized_name for search -->
+        <createIndex tableName="heroes" indexName="idx_heroes_localized_name">
+            <column name="localized_name"/>
+        </createIndex>
+
+        <!-- Create index on primary_attr for filtering -->
+        <createIndex tableName="heroes" indexName="idx_heroes_primary_attr">
+            <column name="primary_attr"/>
+        </createIndex>
+
+        <rollback>
+            <dropTable tableName="heroes"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Add trigger to update updated_at timestamp -->
+    <changeSet id="001-03-create-update-timestamp-function" author="claude">
+        <sql>
+            CREATE OR REPLACE FUNCTION update_updated_at_column()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                NEW.updated_at = CURRENT_TIMESTAMP;
+                RETURN NEW;
+            END;
+            $$ language 'plpgsql';
+
+            CREATE TRIGGER update_heroes_updated_at 
+                BEFORE UPDATE ON heroes 
+                FOR EACH ROW 
+                EXECUTE FUNCTION update_updated_at_column();
+        </sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS update_heroes_updated_at ON heroes;
+            DROP FUNCTION IF EXISTS update_updated_at_column();
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

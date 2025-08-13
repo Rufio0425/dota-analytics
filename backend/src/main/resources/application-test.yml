@@ -1,0 +1,32 @@
+spring:
+  # Test Database Configuration
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: 
+    driver-class-name: org.h2.Driver
+
+  # JPA Test Configuration
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+
+  # Disable Liquibase for tests
+  liquibase:
+    enabled: false
+
+  # Test Cache Configuration
+  cache:
+    type: simple
+
+# Test Logging
+logging:
+  level:
+    com.dotaanalytics: DEBUG
+    org.springframework.test: DEBUG
+
+# Mock OpenDota API for tests
+opendota:
+  api:
+    base-url: http://localhost:8888/api  # Mock server for tests

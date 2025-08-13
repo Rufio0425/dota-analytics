@@ -1,0 +1,35 @@
+# Internal documentation (not tracked in git)
+docs/internal/
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Dependencies
+node_modules/
+target/
+build/
+dist/
+
+# Database
+*.db
+*.sqlite
+
+# Temporary files
+tmp/
+temp/
