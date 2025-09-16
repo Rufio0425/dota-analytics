@@ -5,7 +5,6 @@ plugins {
     id("io.spring.dependency-management") version "1.1.4"
     kotlin("jvm") version "1.9.23"
     kotlin("plugin.spring") version "1.9.23"
-    kotlin("plugin.jpa") version "1.9.23"
 }
 
 group = "com.dotaanalytics"
@@ -23,10 +22,10 @@ dependencies {
     // Spring Boot Starters
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-cache")
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     
     // Kotlin Support
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -36,6 +35,9 @@ dependencies {
     // Database
     implementation("org.postgresql:postgresql")
     implementation("org.liquibase:liquibase-core")
+    
+    // MyBatis
+    implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3")
     
     // Caching
     implementation("org.springframework.boot:spring-boot-starter-data-redis")

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Create hero_stats table -->
+    <changeSet id="002-01-create-hero-stats-table" author="claude">
+        <createTable tableName="hero_stats">
+            <column name="id" type="uuid" defaultValueComputed="uuid_generate_v4()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="hero_id" type="uuid">
+                <constraints nullable="false" foreignKeyName="fk_hero_stats_hero_id" references="heroes(id)" deleteCascade="true"/>
+            </column>
+            <column name="opendota_hero_id" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <!-- Statistics from OpenDota API -->
+            <column name="total_matches" type="bigint" defaultValue="0"/>
+            <column name="total_wins" type="bigint" defaultValue="0"/>
+            <column name="win_rate" type="decimal(5,4)"/>
+            <column name="pick_rate" type="decimal(5,4)"/>
+            <column name="ban_rate" type="decimal(5,4)"/>
+            <column name="avg_kills" type="decimal(5,2)"/>
+            <column name="avg_deaths" type="decimal(5,2)"/>
+            <column name="avg_assists" type="decimal(5,2)"/>
+            <column name="avg_last_hits" type="decimal(7,2)"/>
+            <column name="avg_denies" type="decimal(6,2)"/>
+            <column name="avg_gpm" type="decimal(7,2)"/>
+            <column name="avg_xpm" type="decimal(7,2)"/>
+            <column name="avg_hero_damage" type="decimal(10,2)"/>
+            <column name="avg_tower_damage" type="decimal(10,2)"/>
+            <column name="avg_hero_healing" type="decimal(10,2)"/>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Create indexes for performance -->
+        <createIndex tableName="hero_stats" indexName="idx_hero_stats_hero_id">
+            <column name="hero_id"/>
+        </createIndex>
+
+        <createIndex tableName="hero_stats" indexName="idx_hero_stats_opendota_hero_id">
+            <column name="opendota_hero_id"/>
+        </createIndex>
+
+        <createIndex tableName="hero_stats" indexName="idx_hero_stats_win_rate">
+            <column name="win_rate"/>
+        </createIndex>
+
+        <createIndex tableName="hero_stats" indexName="idx_hero_stats_pick_rate">
+            <column name="pick_rate"/>
+        </createIndex>
+
+        <rollback>
+            <dropTable tableName="hero_stats"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Add trigger to update updated_at timestamp -->
+    <changeSet id="002-02-create-hero-stats-update-timestamp-trigger" author="claude">
+        <sql>
+            CREATE TRIGGER update_hero_stats_updated_at 
+                BEFORE UPDATE ON hero_stats 
+                FOR EACH ROW 
+                EXECUTE FUNCTION update_updated_at_column();
+        </sql>
+        <rollback>
+            DROP TRIGGER IF EXISTS update_hero_stats_updated_at ON hero_stats;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
