@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${hero.localizedName} + ' - Dota 2 Hero Details'">Hero Details</title>
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Back to Heroes Button -->
+        <div class="mb-6">
+            <a href="/heroes" class="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                ← Back to Heroes
+            </a>
+        </div>
+
+        <!-- Hero Details -->
+        <div class="bg-white rounded-lg shadow-lg p-8">
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-gray-900 mb-2" th:text="${hero.localizedName}"></h1>
+                <p class="text-gray-600 text-lg" th:text="${hero.name}"></p>
+            </div>
+
+            <!-- Hero Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <!-- Primary Attribute -->
+                <div class="bg-blue-50 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-blue-900 mb-2">Primary Attribute</h3>
+                    <p class="text-2xl font-bold text-blue-700" th:text="${hero.primaryAttr}"></p>
+                </div>
+
+                <!-- Attack Type -->
+                <div class="bg-green-50 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-green-900 mb-2">Attack Type</h3>
+                    <p class="text-2xl font-bold text-green-700" th:text="${hero.attackType}"></p>
+                </div>
+
+                <!-- Hero ID -->
+                <div class="bg-purple-50 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-purple-900 mb-2">Hero ID</h3>
+                    <p class="text-2xl font-bold text-purple-700" th:text="${hero.id}"></p>
+                </div>
+
+            </div>
+
+            <!-- Roles Section -->
+            <div class="mt-8">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">Roles</h3>
+                <div class="flex flex-wrap gap-2">
+                    <span th:each="role : ${hero.roles}"
+                          th:text="${role}"
+                          class="px-4 py-2 bg-indigo-100 text-indigo-800 text-lg font-medium rounded-lg">
+                    </span>
+                </div>
+            </div>
+
+            <!-- Technical Details -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">Technical Details</h3>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <p class="text-gray-700"><span class="font-medium">Internal Name:</span> <code th:text="${hero.name}" class="bg-gray-200 px-2 py-1 rounded text-sm"></code></p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

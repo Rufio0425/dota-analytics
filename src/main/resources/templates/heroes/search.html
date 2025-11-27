@@ -31,7 +31,12 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div th:each="hero : ${heroes}" class="bg-white rounded-lg shadow-md p-4">
-                <h3 class="text-xl font-semibold mb-2" th:text="${hero.localizedName}"></h3>
+                <h3 class="text-xl font-semibold mb-2">
+                    <a th:href="@{/heroes(hero=${hero.localizedName})}"
+                       th:text="${hero.localizedName}"
+                       class="text-blue-600 hover:text-blue-800 hover:underline">
+                    </a>
+                </h3>
                 <p class="text-gray-600 mb-2">Primary Attribute: <span th:text="${hero.primaryAttr}" class="font-medium"></span></p>
                 <p class="text-gray-600 mb-2">Attack Type: <span th:text="${hero.attackType}" class="font-medium"></span></p>
                 <div class="flex flex-wrap gap-1">
