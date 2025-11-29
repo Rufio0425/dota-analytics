@@ -24,4 +24,8 @@ class HeroService(
             hero.name.contains(criteria.query, ignoreCase = true)
         }
     }
+
+    fun getHeroByName(heroName: String): HeroDto? {
+        return getHeroes().find { it.localizedName.equals(heroName, ignoreCase = true) }
+    }
 }
