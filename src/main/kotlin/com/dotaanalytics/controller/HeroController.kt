@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 
 @Controller
-@RequestMapping("/heroes")
+@RequestMapping("/")
 class HeroController(private val heroService: HeroService) {
 
     @GetMapping
@@ -26,7 +26,7 @@ class HeroController(private val heroService: HeroService) {
                 model.addAttribute("hero", heroDetails)
                 "heroes/details"
             } else {
-                "redirect:/heroes"
+                "redirect:/"
             }
         }
 

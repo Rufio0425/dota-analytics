@@ -12,7 +12,7 @@
         <h1 class="text-3xl font-bold text-center mb-8">Dota 2 Hero Search</h1>
 
         <div class="max-w-2xl mx-auto mb-8">
-            <form method="GET" action="/heroes" class="flex gap-2">
+            <form method="GET" action="/" class="flex gap-2">
                 <input
                     type="text"
                     name="query"
@@ -32,7 +32,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div th:each="hero : ${heroes}" class="bg-white rounded-lg shadow-md p-4">
                 <h3 class="text-xl font-semibold mb-2">
-                    <a th:href="@{/heroes(hero=${hero.localizedName})}"
+                    <a th:href="@{/(hero=${hero.localizedName})}"
                        th:text="${hero.localizedName}"
                        class="text-blue-600 hover:text-blue-800 hover:underline">
                     </a>
