@@ -6,8 +6,12 @@
     <title>Dota 2 Hero Search</title>
     <script src="https://unpkg.com/htmx.org@1.9.6"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100" x-data="{ selectedHeroes: [] }">
     <div class="container mx-auto px-4 py-8">
         <h1 class="text-3xl font-bold text-center mb-8">Dota 2 Hero Search</h1>
 
@@ -29,14 +33,61 @@
             </form>
         </div>
 
+        <!-- Selected Heroes Section -->
+        <div x-show="selectedHeroes.length > 0" class="max-w-6xl mx-auto mb-8" x-cloak>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold">Selected Heroes (<span x-text="selectedHeroes.length"></span>)</h2>
+                    <button
+                        @click="selectedHeroes = []"
+                        class="text-sm text-red-600 hover:text-red-800 font-medium">
+                        Clear All
+                    </button>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <template x-for="hero in selectedHeroes" :key="hero.id">
+                        <div class="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
+                            <span x-text="hero.name" class="font-medium text-blue-900"></span>
+                            <button
+                                @click="selectedHeroes = selectedHeroes.filter(h => h.id !== hero.id)"
+                                class="text-blue-600 hover:text-blue-800 font-bold">
+                                ×
+                            </button>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div th:each="hero : ${heroes}" class="bg-white rounded-lg shadow-md p-4">
-                <h3 class="text-xl font-semibold mb-2">
-                    <a th:href="@{/(hero=${hero.localizedName})}"
-                       th:text="${hero.localizedName}"
-                       class="text-blue-600 hover:text-blue-800 hover:underline">
-                    </a>
-                </h3>
+            <div th:each="hero : ${heroes}"
+                 class="bg-white rounded-lg shadow-md p-4"
+                 th:data-hero-id="${hero.id}"
+                 th:data-hero-name="${hero.localizedName}">
+                <div class="flex items-start justify-between mb-2">
+                    <h3 class="text-xl font-semibold flex-1">
+                        <a th:href="@{/(hero=${hero.localizedName})}"
+                           th:text="${hero.localizedName}"
+                           class="text-blue-600 hover:text-blue-800 hover:underline">
+                        </a>
+                    </h3>
+                    <label class="flex items-center cursor-pointer">
+                        <input
+                            type="checkbox"
+                            @change="
+                                const heroId = parseInt($el.closest('[data-hero-id]').dataset.heroId);
+                                const heroName = $el.closest('[data-hero-name]').dataset.heroName;
+                                if (selectedHeroes.some(h => h.id === heroId)) {
+                                    selectedHeroes = selectedHeroes.filter(h => h.id !== heroId)
+                                } else {
+                                    selectedHeroes = [...selectedHeroes, { id: heroId, name: heroName }]
+                                }
+                            "
+                            :checked="selectedHeroes.some(h => h.id === parseInt($el.closest('[data-hero-id]').dataset.heroId))"
+                            class="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                        />
+                    </label>
+                </div>
                 <p class="text-gray-600 mb-2">Primary Attribute: <span th:text="${hero.primaryAttr}" class="font-medium"></span></p>
                 <p class="text-gray-600 mb-2">Attack Type: <span th:text="${hero.attackType}" class="font-medium"></span></p>
                 <div class="flex flex-wrap gap-1">
