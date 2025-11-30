@@ -11,7 +11,7 @@
         [x-cloak] { display: none !important; }
     </style>
 </head>
-<body class="bg-gray-100" x-data="{ selectedHeroes: [] }">
+<body class="bg-gray-100" x-data="{ teamHeroes: [], enemyHeroes: [] }">
     <div class="container mx-auto px-4 py-8">
         <h1 class="text-3xl font-bold text-center mb-8">Dota 2 Hero Search</h1>
 
@@ -33,24 +33,50 @@
             </form>
         </div>
 
-        <!-- Selected Heroes Section -->
-        <div x-show="selectedHeroes.length > 0" class="max-w-6xl mx-auto mb-8" x-cloak>
-            <div class="bg-white rounded-lg shadow-md p-6">
+        <!-- Selected Team Section -->
+        <div x-show="teamHeroes.length > 0" class="max-w-6xl mx-auto mb-4" x-cloak>
+            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-semibold">Selected Heroes (<span x-text="selectedHeroes.length"></span>)</h2>
+                    <h2 class="text-xl font-semibold text-blue-700">Selected Team (<span x-text="teamHeroes.length"></span>)</h2>
                     <button
-                        @click="selectedHeroes = []"
+                        @click="teamHeroes = []"
+                        class="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                        Clear All
+                    </button>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <template x-for="hero in teamHeroes" :key="hero.id">
+                        <div class="flex items-center gap-2 bg-blue-50 border border-blue-300 rounded-lg px-3 py-2">
+                            <span x-text="hero.name" class="font-medium text-blue-900"></span>
+                            <button
+                                @click="teamHeroes = teamHeroes.filter(h => h.id !== hero.id)"
+                                class="text-blue-600 hover:text-blue-800 font-bold">
+                                ×
+                            </button>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- Selected Enemies Section -->
+        <div x-show="enemyHeroes.length > 0" class="max-w-6xl mx-auto mb-8" x-cloak>
+            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-red-500">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-red-700">Selected Enemies (<span x-text="enemyHeroes.length"></span>)</h2>
+                    <button
+                        @click="enemyHeroes = []"
                         class="text-sm text-red-600 hover:text-red-800 font-medium">
                         Clear All
                     </button>
                 </div>
                 <div class="flex flex-wrap gap-2">
-                    <template x-for="hero in selectedHeroes" :key="hero.id">
-                        <div class="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
-                            <span x-text="hero.name" class="font-medium text-blue-900"></span>
+                    <template x-for="hero in enemyHeroes" :key="hero.id">
+                        <div class="flex items-center gap-2 bg-red-50 border border-red-300 rounded-lg px-3 py-2">
+                            <span x-text="hero.name" class="font-medium text-red-900"></span>
                             <button
-                                @click="selectedHeroes = selectedHeroes.filter(h => h.id !== hero.id)"
-                                class="text-blue-600 hover:text-blue-800 font-bold">
+                                @click="enemyHeroes = enemyHeroes.filter(h => h.id !== hero.id)"
+                                class="text-red-600 hover:text-red-800 font-bold">
                                 ×
                             </button>
                         </div>
@@ -71,22 +97,42 @@
                            class="text-blue-600 hover:text-blue-800 hover:underline">
                         </a>
                     </h3>
-                    <label class="flex items-center cursor-pointer">
-                        <input
-                            type="checkbox"
-                            @change="
-                                const heroId = parseInt($el.closest('[data-hero-id]').dataset.heroId);
-                                const heroName = $el.closest('[data-hero-name]').dataset.heroName;
-                                if (selectedHeroes.some(h => h.id === heroId)) {
-                                    selectedHeroes = selectedHeroes.filter(h => h.id !== heroId)
-                                } else {
-                                    selectedHeroes = [...selectedHeroes, { id: heroId, name: heroName }]
-                                }
-                            "
-                            :checked="selectedHeroes.some(h => h.id === parseInt($el.closest('[data-hero-id]').dataset.heroId))"
-                            class="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
-                        />
-                    </label>
+                    <div class="flex flex-col gap-1">
+                        <label class="flex items-center gap-1 cursor-pointer text-sm">
+                            <input
+                                type="checkbox"
+                                @change="
+                                    const heroId = parseInt($el.closest('[data-hero-id]').dataset.heroId);
+                                    const heroName = $el.closest('[data-hero-name]').dataset.heroName;
+                                    if (teamHeroes.some(h => h.id === heroId)) {
+                                        teamHeroes = teamHeroes.filter(h => h.id !== heroId)
+                                    } else {
+                                        teamHeroes = [...teamHeroes, { id: heroId, name: heroName }]
+                                    }
+                                "
+                                :checked="teamHeroes.some(h => h.id === parseInt($el.closest('[data-hero-id]').dataset.heroId))"
+                                class="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                            />
+                            <span class="text-blue-700 font-medium">Team</span>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer text-sm">
+                            <input
+                                type="checkbox"
+                                @change="
+                                    const heroId = parseInt($el.closest('[data-hero-id]').dataset.heroId);
+                                    const heroName = $el.closest('[data-hero-name]').dataset.heroName;
+                                    if (enemyHeroes.some(h => h.id === heroId)) {
+                                        enemyHeroes = enemyHeroes.filter(h => h.id !== heroId)
+                                    } else {
+                                        enemyHeroes = [...enemyHeroes, { id: heroId, name: heroName }]
+                                    }
+                                "
+                                :checked="enemyHeroes.some(h => h.id === parseInt($el.closest('[data-hero-id]').dataset.heroId))"
+                                class="w-4 h-4 text-red-600 rounded focus:ring-2 focus:ring-red-500 cursor-pointer"
+                            />
+                            <span class="text-red-700 font-medium">Enemy</span>
+                        </label>
+                    </div>
                 </div>
                 <p class="text-gray-600 mb-2">Primary Attribute: <span th:text="${hero.primaryAttr}" class="font-medium"></span></p>
                 <p class="text-gray-600 mb-2">Attack Type: <span th:text="${hero.attackType}" class="font-medium"></span></p>
